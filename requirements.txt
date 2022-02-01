@@ -1,0 +1,7 @@
+sacrebleu 
+subword-nmt
+sacremoses 
+googletrans==3.1.0a0 
+wandb 
+pandas
+torch==1.8.0

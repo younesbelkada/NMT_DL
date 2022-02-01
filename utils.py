@@ -1,26 +1,12 @@
 import os
 import time
-import copy
 import sys
 
 import torch
 import wandb
 
 import numpy as np
-import torch.nn as nn
-import torch.nn.functional as F
-import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
-
-from torch import optim
-from torch.utils.data import DataLoader
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-from functools import partial
 from tqdm import tqdm as tqdm
-
-import nmt_dataset
-import nnet_models
-from subword_nmt.apply_bpe import BPE
 
 
 def postprocess(line):
