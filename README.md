@@ -2,7 +2,7 @@
 Neural Machine Translation - Deep Learning
 
 <p align="center">
-  <img src="https://github.com/"/>
+  <img src="https://github.com/younesbelkada/NMT_DL/blob/main/images/background.png?raw=true"/>
 </p>
 
 
