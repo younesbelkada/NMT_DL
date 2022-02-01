@@ -611,7 +611,7 @@ class TransformerEncoder(nn.Module):
         outputs = []
         self_attn_weights_list = []
         for i, layer in enumerate(self.layers):
-            x, _, self_attn_weights = layer(
+            x, self_attn_weights = layer(
                 x,
                 src_key_padding_mask=mask
             )
@@ -927,7 +927,7 @@ class TransformerEncoderLayer(nn.TransformerEncoderLayer):
         residual = x
         if self.normalize_before:
             x = self.norm1(x)
-        x, _, self_attn_weights_all_heads = self.self_attn(
+        x, self_attn_weights_all_heads = self.self_attn(
             x, x, x, attn_mask=src_mask,
             key_padding_mask=src_key_padding_mask)
         x = residual + self.dropout1(x)
