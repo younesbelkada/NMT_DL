@@ -611,7 +611,7 @@ class TransformerEncoder(nn.Module):
         outputs = []
         self_attn_weights_list = []
         for i, layer in enumerate(self.layers):
-            x, self_attn_weights = layer(
+            x, _, self_attn_weights = layer(
                 x,
                 src_key_padding_mask=mask
             )
