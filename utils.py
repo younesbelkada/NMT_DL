@@ -22,37 +22,19 @@ import nmt_dataset
 import nnet_models
 from subword_nmt.apply_bpe import BPE
 
-data_dir = 'data'
-source_lang, target_lang = 'en', 'fr'
-model_dir = 'models/{}-{}'.format(source_lang, target_lang)
+
+def postprocess(line):
+    return line.replace('@@ ', '')
 
 def reset_seed(seed=1234):
     np.random.seed(seed)
     torch.manual_seed(seed)
 
-bpe_path = os.path.join(data_dir, 'bpecodes.de-en-fr')
-
-with open(bpe_path) as bpe_codes:
-    bpe_model = BPE(bpe_codes)
-
-
-def preprocess(line, is_source=True, source_lang=None, target_lang=None):
-    return bpe_model.segment(line.lower())
-
-def postprocess(line):
-    return line.replace('@@ ', '')
-
-def load_data(source_lang, target_lang, split='train', max_size=None):
-    # max_size: max number of sentence pairs in the training corpus (None = all)
-    path = os.path.join(data_dir, '{}.{}-{}'.format(split, *sorted([source_lang, target_lang])))
-    return nmt_dataset.load_dataset(path, source_lang, target_lang, preprocess=preprocess, max_size=max_size)   # set max_size to 10000 for fast debugging
-
-
 def save_model(model, checkpoint_path):
     dirname = os.path.dirname(checkpoint_path)
     if dirname:
         os.makedirs(dirname, exist_ok=True)
-    torch.save(model, checkpoint_path)
+    torch.save(model, os.path.join(checkpoint_path, model.__class__.__name__+'.p'))
 
 def train_model(
         train_iterator,
@@ -60,7 +42,8 @@ def train_model(
         model,
         checkpoint_path,
         epochs=1,
-        validation_frequency=1
+        validation_frequency=1,
+        config=None
     ):
     """
     train_iterator: instance of nmt_dataset.BatchIterator or nmt_dataset.MultiBatchIterator
@@ -74,6 +57,11 @@ def train_model(
     reset_seed()
 
     best_bleu = -1
+    model_dir = config.hparams.save_dir
+    wandb_name = config.hparams.wandb_project
+    wandb_entity = config.hparams.wandb_entity
+
+    wandb.init(project=wandb_name, entity=wandb_entity)
     for epoch in range(1, epochs + 1):
 
         start = time.time()
@@ -84,7 +72,9 @@ def train_model(
         # Iterate over training batches for one epoch
         for i, batch in tqdm(enumerate(train_iterator), total=len(train_iterator)):
             t = time.time()
-            running_loss += model.train_step(batch)
+            tmp_loss = model.train_step(batch)
+            running_loss += tmp_loss
+            wandb.log({'loss':tmp_loss})
 
         # Average training loss for this epoch
         # *****START CODE
@@ -118,7 +108,7 @@ def train_model(
             bleu_score = round(sum(bleu_scores) / len(bleu_scores), 2)
             if len(bleu_scores) > 1:
                 print('BLEU={}'.format(bleu_score))
-
+            wandb.log({'bleu':bleu_score})
             # Update the model's learning rate based on current performance.
             # This scheduler divides the learning rate by 10 if BLEU does not improve.
             model.scheduler_step(bleu_score)

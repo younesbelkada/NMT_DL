@@ -109,7 +109,7 @@ def load_or_create_dictionary(dict_path, dataset, minimum_count=1, reset=False):
     return dictionary
 
 
-def load_dataset(path, source_lang, target_lang, preprocess=None, max_size=None):
+def load_dataset(path, source_lang, target_lang, preprocess=None, max_size=None, bpe_model=None):
     dataset = pd.DataFrame()
 
     with open("{}.{}".format(path, source_lang)) as source_file:
@@ -126,7 +126,8 @@ def load_dataset(path, source_lang, target_lang, preprocess=None, max_size=None)
                 x,
                 is_source=is_source,
                 source_lang=source_lang,
-                target_lang=target_lang
+                target_lang=target_lang,
+                bpe_model=bpe_model
             )
         return x.split()
 

@@ -929,7 +929,7 @@ class TransformerEncoderLayer(nn.TransformerEncoderLayer):
             x = self.norm1(x)
         x, self_attn_weights_all_heads = self.self_attn(
             x, x, x, attn_mask=src_mask,
-            key_padding_mask=src_key_padding_mask)
+            key_padding_mask=src_key_padding_mask,  need_weights=True)
         x = residual + self.dropout1(x)
         if not self.normalize_before:
             x = self.norm1(x)
@@ -957,7 +957,7 @@ class TransformerDecoderLayer(nn.TransformerDecoderLayer):
             x = self.norm1(x)
         if prev_states is None:
             prev_states = x
-        x, _, self_attn_weights_all_heads = self.self_attn(
+        x, self_attn_weights_all_heads = self.self_attn(
             x, prev_states, prev_states, attn_mask=tgt_mask,
             key_padding_mask=tgt_key_padding_mask)
         x = residual + self.dropout1(x)
@@ -967,7 +967,7 @@ class TransformerDecoderLayer(nn.TransformerDecoderLayer):
         residual = x
         if self.normalize_before:
             x = self.norm2(x)
-        x, attn_weights, attn_weights_all_heads = self.multihead_attn(
+        x, attn_weights = self.multihead_attn(
             x, memory, memory, attn_mask=memory_mask,
             key_padding_mask=memory_key_padding_mask)
         x = residual + self.dropout2(x)

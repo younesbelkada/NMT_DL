@@ -2,7 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+wandb/
+pretrained_models/
+output_dir/
+models/
+data/
 # C extensions
 *.so
 

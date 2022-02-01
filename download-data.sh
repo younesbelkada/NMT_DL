@@ -32,4 +32,4 @@ fi
 #fi
 
 wget -nc https://www.dropbox.com/s/ckdxt6h8hj4lygw/pretrained_models.zip
-unzip models.zip
+unzip pretrained_models.zip
