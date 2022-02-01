@@ -1,6 +1,11 @@
 # NMT_DL
 Neural Machine Translation - Deep Learning
 
+<p align="center">
+  <img src="https://github.com/"/>
+</p>
+
+
 This code is an implementation of the Neural Machine Translation homework from the *Introduction to Deep Learning* course from the MVA Masters program.
 
 ## Requirements
